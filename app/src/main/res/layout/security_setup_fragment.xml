@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введите пароль"
+        android:layout_margin="20dp"
+        android:id="@+id/textView_passwd"
+        android:textSize="20sp" />
+
+    <EditText android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:hint="password"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cохранить и выйти"
+        android:id="@+id/button_save_paswrd"
+        android:layout_margin="10dp"
+        android:layout_gravity="right" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Выйти не сохраняя"
+        android:layout_margin="10dp"
+        android:id="@+id/button_exit_paswd"
+        android:layout_gravity="right" />
+
+
+</LinearLayout>

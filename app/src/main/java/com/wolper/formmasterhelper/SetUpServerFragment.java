@@ -19,6 +19,16 @@ public class SetUpServerFragment extends Fragment {
     private EditText text_forIp;
     private Button button_exit;
     private Button button_save;
+    private MainStorageSingleton mainStorageSingleton;
+
+
+    @Override
+    public void onCreate(Bundle b) {
+        super.onCreate(b);
+        setRetainInstance(true);
+        mainStorageSingleton = MainStorageSingleton.getInstance();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,7 +59,7 @@ public class SetUpServerFragment extends Fragment {
 
         //Text field for enterring IP address for server
         text_forIp = (EditText)v.findViewById(R.id.server_address);
-        text_forIp.setText("192.168.44.44");
+        text_forIp.setText(mainStorageSingleton.server);
         text_forIp.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(

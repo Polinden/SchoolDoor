@@ -29,6 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Вход"
+                android:onClick="onClicButtons"
                 android:id="@+id/button_scan_in"
                 android:textSize="20sp"
                 android:layout_marginLeft="5dp"
@@ -50,7 +51,7 @@
                 android:layout_weight="1"
                 android:layout_above="@+id/button_scan_in"
                 android:layout_gravity="center"
-                android:src="@drawable/icon_main_screen" />
+                android:src="@drawable/icon_main" />
 
 
             <Button
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:text="Выход"
                 android:id="@+id/button_scan_out"
+                android:onClick="onClicButtons"
                 android:textSize="20sp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="5dp"

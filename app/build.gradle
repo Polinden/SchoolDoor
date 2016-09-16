@@ -11,6 +11,19 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+    }
+
+
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -25,4 +38,8 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:3.3.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
+    compile group: 'commons-validator', name: 'commons-validator', version: '1.4.0'
 }
+
+

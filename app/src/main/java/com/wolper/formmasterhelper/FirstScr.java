@@ -23,7 +23,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 
 public class FirstScr extends AppCompatActivity {
 
-    private boolean commingin=true;
+    private volatile boolean commingin=true;
     private TextView textView_invite;
     private final int SERVER_SETUP_REQUEST=25;
     private final int SERVER_SECURE_REQUEST=26;
@@ -71,6 +71,7 @@ public class FirstScr extends AppCompatActivity {
         textView_invite = (TextView) findViewById(R.id.text_scanned);
         if (savedInstanceState!=null) {
             textView_invite.setText(savedInstanceState.getString("uniqID", ""));
+            commingin=savedInstanceState.getBoolean("inout", true);
         }
 
         //Create or restore AsyncAnction infinite cicle
@@ -119,6 +120,7 @@ public class FirstScr extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         bundle.putString("uniqID", (String) textView_invite.getText());
+        bundle.putBoolean("inout", commingin);
     }
 
 
@@ -185,9 +187,11 @@ public class FirstScr extends AppCompatActivity {
 
     //Sending scan results to server
     private void sendScanResult(boolean commingin, String scanContent) {
-        Date date = new Date();
-        scanContent+="&"+(commingin?"in&": "out&")+date.getTime();
-        mainStorageSingleton.getQueue().offer(scanContent);
+        PlayLoad playLoad = new PlayLoad();
+        playLoad.setCode(scanContent);
+        playLoad.setInout(commingin?"in": "out");
+        playLoad.setDate(new Date().getTime());
+        mainStorageSingleton.getQueue().offer(playLoad);
         httpTask.cleanError();
     }
 
@@ -232,12 +236,12 @@ public class FirstScr extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             while (true) {
-                    String playload=mainStorageSingleton.getQueue().poll();
+                    PlayLoad playload=mainStorageSingleton.getQueue().poll();
                     if (playload==null) continue;
                     SendRest sendRest = SendRest.initWithServerName(mainStorageSingleton.server).
-                            setPassword(mainStorageSingleton.password).prepareForSend();
+                            setPassword(mainStorageSingleton.password).prepareForSend(playload);
                     //on any error we will return playload to the queue and signal for error (only once)
-                    if (!sendRest.senmMe(playload)) {
+                    if (!sendRest.senmMe()) {
                         mainStorageSingleton.getQueue().offer(playload);
                         publishProgress(sendRest.getError());
                     }
@@ -256,6 +260,7 @@ public class FirstScr extends AppCompatActivity {
         }
 
     }
+
 
 }
 

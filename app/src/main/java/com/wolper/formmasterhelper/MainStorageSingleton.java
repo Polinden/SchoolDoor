@@ -10,7 +10,7 @@ public class MainStorageSingleton {
     public volatile String password;
     public volatile String server;
     //queue for daving playloads redy to be sent to server asyncroniously
-    Queue<String> queue;
+    Queue<PlayLoad> queue;
 
 
     public static MainStorageSingleton getInstance() {
@@ -32,7 +32,7 @@ public class MainStorageSingleton {
         queue = new ConcurrentLinkedQueue();
     }
 
-    public synchronized Queue<String> getQueue(){
+    public synchronized Queue<PlayLoad> getQueue(){
         return queue;
     }
 }

@@ -17,7 +17,7 @@ public class SendRest {
     private String password;
     private final String USERNAME="FMH";
     private RestTemplate restTemplate;
-    private HttpEntity<?> requestEntity;
+    private HttpEntity<PlayLoad> requestEntity;
     private String errorSend;
 
 
@@ -35,17 +35,17 @@ public class SendRest {
         return this;
     }
 
-    public SendRest prepareForSend(){
+    public SendRest prepareForSend(PlayLoad playload){
         HttpAuthentication authHeader = new HttpBasicAuthentication(USERNAME, password);
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setAuthorization(authHeader);
         requestHeaders.setContentType(new MediaType("application","json"));
-        requestEntity = new HttpEntity<Object>(requestHeaders);
+        requestEntity = new HttpEntity<PlayLoad>(playload, requestHeaders);
         restTemplate = new RestTemplate();
         return this;
     }
 
-    public boolean senmMe(String playload){
+    public boolean senmMe(){
         boolean status=true;
         try {
             ResponseEntity<String> ok=restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);

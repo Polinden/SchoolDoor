@@ -3,12 +3,15 @@ package com.wolper.formmasterhelper;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -74,7 +77,13 @@ public class FirstScr extends AppCompatActivity {
             commingin=savedInstanceState.getBoolean("inout", true);
         }
 
-        //Create or restore AsyncAnction infinite cicle
+        //Set animation
+        showQueueLength();
+        Animation anim = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
+        textView_invite.setAnimation(anim);
+
+
+        //Create or restore AsyncAnction infinite cycle
         httpTask = (HttpRequestTask) getLastCustomNonConfigurationInstance();
         if (httpTask==null) {
             httpTask = new HttpRequestTask();
@@ -124,6 +133,16 @@ public class FirstScr extends AppCompatActivity {
     }
 
 
+    //Stop the infinite cycle on finishing the app
+    @Override
+    protected void onDestroy(){
+        if (isFinishing())
+            if (httpTask!=null) httpTask.cancel(false);
+        super.onDestroy();
+    }
+
+
+
     //Getting result from called activities
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -156,7 +175,6 @@ public class FirstScr extends AppCompatActivity {
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanningResult != null) {
             String scanContent = scanningResult.getContents();
-            String scanFormat = scanningResult.getFormatName();
 
             //showing Scan Result on the screen and sending to server
             sendScanResult(commingin, scanContent);
@@ -165,7 +183,7 @@ public class FirstScr extends AppCompatActivity {
     }
 
 
-    //Changing in/out mode
+    //Changing in-out mode
     private void setComming(boolean b) {
         commingin=b;
     }
@@ -173,7 +191,7 @@ public class FirstScr extends AppCompatActivity {
 
     //Show Queue Length
     private void showQueueLength() {
-        textView_invite.setText("K отправке: "+mainStorageSingleton.getQueue().size()+" чел");
+        textView_invite.setText(customAnimation(mainStorageSingleton.getQueue().size()));
     }
 
 
@@ -215,6 +233,17 @@ public class FirstScr extends AppCompatActivity {
     }
 
 
+    //Animation for status string
+    private String customAnimation(int x){
+        String s="";
+        if (x==0) {s="Очередь пуста"; textView_invite.setTextColor(Color.GREEN);}
+        if (x>0) {s=">"+x+"чел"; textView_invite.setTextColor(Color.RED);}
+        if (x>2) s=">>>"+x+"чел";
+        if (x>4) s=">>>>"+x+"чел";
+        if (x>6) s=">>>>>"+x+"чел";
+        return s;
+    }
+
 
 
 
@@ -236,10 +265,16 @@ public class FirstScr extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             while (true) {
+
+                    //check if interrupted and finish if work is done
+                    if (isCancelled())
+                        if (mainStorageSingleton.getQueue().size()==0) return null;
+
                     PlayLoad playload=mainStorageSingleton.getQueue().poll();
                     if (playload==null) continue;
                     SendRest sendRest = SendRest.initWithServerName(mainStorageSingleton.server).
                             setPassword(mainStorageSingleton.password).prepareForSend(playload);
+
                     //on any error we will return playload to the queue and signal for error (only once)
                     if (!sendRest.senmMe()) {
                         mainStorageSingleton.getQueue().offer(playload);
@@ -260,7 +295,6 @@ public class FirstScr extends AppCompatActivity {
         }
 
     }
-
 
 }
 

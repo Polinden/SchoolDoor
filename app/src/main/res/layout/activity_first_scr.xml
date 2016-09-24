@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/zxing_custom_viewfinder_mask"
     tools:context="com.wolper.formmasterhelper.FirstScr">
 
 
@@ -82,18 +83,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="ScanResult"
-            android:textSize="20sp"
+            android:hint="Ждут отправки на сервер"
+            android:textSize="15sp"
             android:gravity="left"
-            android:layout_weight="0.75"
+            android:layout_weight="0.8"
+            android:textColor="@color/zxing_status_text"
             android:id="@+id/text_scanned" />
 
         <DigitalClock
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/digitalClock"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="15dp"
             android:gravity="right"
-            android:layout_weight="0.25"
+            android:layout_weight="0.20"
+            android:textColor="@color/zxing_status_text"
             android:textSize="20sp" />
 
     </LinearLayout>

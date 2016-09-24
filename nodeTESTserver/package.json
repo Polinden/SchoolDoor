@@ -1,5 +1,5 @@
 {
-  "name": "my_server",
+  "name": "test_rest_server",
   "version": "1.0.0",
   "description": "server rest",
   "main": "testRESTserver4FMH.js",
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "basic-auth-connect" : "1.0.0"
   }
 }

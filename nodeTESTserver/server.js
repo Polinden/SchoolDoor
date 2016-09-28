@@ -6,6 +6,7 @@ var app = express();
 var bodyParser = require("body-parser");
 var fs = require("fs");
 var basicAuth = require('basic-auth-connect');
+var nameparser = require('./nameparser.js');
 
 
 //constants
@@ -28,6 +29,11 @@ var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
 var timeCorrHr=7;
 var timeCorr=(3600000*timeCorrHr);
 
+//statistics
+//people counter
+var count=0;
+//array of checked in
+var checkedIn=[];
 
 
 app.use(bodyParser.json());
@@ -46,6 +52,14 @@ app.post('/reg', function (req, res) {
 });
 
 
+app.get('/count', function(req, res){
+        res.send(''+count);
+});
+
+
+app.get('/test', function(req, res){
+        res.send(checkedIn.toString());
+});
 
 
 //starting server
@@ -69,19 +83,27 @@ function writeFile(code, inout, hr, min){
     function concatMe(code, inout, hr, min){
 	var smin=min<10?'0':"";
 	smin+=min;
-	return nameF, code+" "+inout+" "+hr+":"+smin+"\n";
+	//find student name by code
+	var scode=nameparser.findByname(code);
+	return scode+" "+inout+" "+hr+":"+smin+"\n";
     }
     
     //creating a title for a table in the file
     function writeTitle(inout, hr, min){
 	var sinout;
+	//initiate new day counter
+	initCount(inout);
 	if (strcmp(inout,'in')==0)
 	    if (isLate(hr, min)) sinout='been LATE';
-		else sinout='ckecking IN';
-	else sinout='checking OUT';
+		else sinout='ckecked IN';
+	else sinout='checked OUT';
 	return 'The list of '+sinout+ ' students of '+getNowDate()+
 	        "\n\n -------------------------------------------------------\n";
     }
+    
+    
+    //return if we already checked in
+    if (ifCheckedIn(code, inout)) return;
     
     
     //creating the file name
@@ -98,6 +120,9 @@ function writeFile(code, inout, hr, min){
 	} else {
 	    fs.writeFile(nameF, writeTitle(inout, hr, min)+concatMe(code, inout, hr, min), function (err, fd) {if (err) console.log(err);});
 	}
+	//do count students
+	countStudents(inout);
+	addtoChecked(code, inout);
 	console.log('written to file '+nameF);
     });
 }
@@ -123,4 +148,32 @@ function strcmp(a, b) {
     return 0;
 }
 
+
+//for counting students
+function countStudents(inout){	
+    if (strcmp(inout,'in')==0) count++;
+	else count--;
+    if (count<0) count=0;
+}
+
+//set counter to null
+function initCount(inout){
+    if(strcmp(inout, 'in')!=0) return; 
+    count=0;
+    checkedIn=[];
+}
+
+//add/remove to/form checked in array
+function addtoChecked(code, inout){
+    if (strcmp(inout, 'in')==0) {checkedIn.push(code); return;}
+    var ind = checkedIn.indexOf(code);
+    if (ind<0) return;
+    checkedIn.splice(ind, 1);
+}
+
+//check if is already cheched in/out
+function ifCheckedIn(code, inout){
+    if (strcmp(inout, 'in')===0) return (checkedIn.indexOf(code)>=0);
+    return (checkedIn.indexOf(code)<0);
+}
 

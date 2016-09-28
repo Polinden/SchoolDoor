@@ -7,25 +7,13 @@ var fs = require('fs')
 var timeCorrHr=7;
 
 //reportHorsettings
-var reportHr=16;
-
+var reportHr=14;
 
 
 //email settings
-var transporter = nodemailer.createTransport('smtps://NAME%40gmail.com:PASSWORD@smtp.gmail.com');
+var transporter = nodemailer.createTransport('smtps://formmasterhelper%40gmail.com:Krokozyabla2002@smtp.gmail.com');
  
  
-// setup e-mail data with unicode symbols 
-var mailOptions = {
-    from: 'NAMEgmail.com', // sender address 
-    to: 'MASTER@ukr.net', // list of receivers 
-    subject: 'Attendance report', // Subject line 
-    text: 'error reading file' // plaintext body 
-    //html: '<b>Hello world</b>' // html body 
-};
- 
-
-
 //constants
 var dirNAME='RECORDS/';
 var nameFIN='_in.txt';
@@ -38,14 +26,28 @@ var nameFLATE='_late.txt';
 var date = new Date();
 var hr = date.getHours();
 var min = date.getMinutes();
-if ((corrHr(hr)>reportHr) && (min<30)) {
-	sendMeReport(getOUTfileName());
+if ((corrHr(hr)==reportHr) && (min<15)) {
+	sendMeReport(getINfileName(), "Attendance report CAME IN TIME 9-B");
+	sendMeReport(getLATEfileName(), "Attendance report WERE LATE 9-B");
+	sendMeReport(getOUTfileName(), "Attendance report GOT OUT 9-B");
 } 
  
  
+ 
 // send mail with defined transport object
-function sendMeReport(name){ 
+function sendMeReport(name, tipics){
+
+	// setup e-mail data with unicode symbols
+	var mailOptions = {
+    	from: 'formmasterhelper@gmail.com', // sender address
+    	to: 'delishki@ukr.net', // list of receivers
+    	subject: tipics, // Subject line
+    	text: 'error reading file' // plaintext body
+	};
+ 
+ 
     if (!fs.existsSync(name)) {console.log('file is absent '+name); return;}
+    
     //if file of report exists then send it
     fs.readFile(name, function (err, data) {
 	if (err) {console.log(err); return};
@@ -87,3 +89,10 @@ function getNowDate(){
 function getOUTfileName(){
     return dirNAME+getNowDate()+nameFOUT;
 }
+function getLATEfileName(){
+    return dirNAME+getNowDate()+nameFLATE;
+}
+function getINfileName(){
+    return dirNAME+getNowDate()+nameFIN;
+}
+

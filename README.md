@@ -11,3 +11,10 @@
 <a href="MAN.pdf">School access control system</a>
 ##
 
+## The System was successfully implemented in Kyiv lyceum KPNL145 in 2018
+It appeared to be the cheapest one among the counterparts
+
+## ToDo or not ToDo
+The NFC improvements were planned but not provided due to the authors tough time-schedule  
+
+
